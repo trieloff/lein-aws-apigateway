@@ -21,15 +21,15 @@
 (defn update-api
   "Update an existing API"
   [project args]
-  (pprint (build-args project :update))
-  ;(ApiImporterMain/main (into-array String ["--update" (-> project :api-gateway :swagger)]))
+  ;(pprint (build-args project :update))
+  (ApiImporterMain/main (into-array String (build-args project :update)))
   )
 
 (defn create-api
   "Create a new API"
   [project args]
   (pprint (build-args project :create))
-  (ApiImporterMain/main (into-array String ["--create"])))
+  (ApiImporterMain/main (into-array String (build-args project :create))))
 
 (defn aws-api-gateway
   "Deploy swagger.json to AWS API Gateway"
