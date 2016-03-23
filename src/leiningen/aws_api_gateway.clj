@@ -9,11 +9,11 @@
 
 (defn build-args
   [{api-gateway :api-gateway} task]
-  (let [{:keys [swagger stage api-id profile raml-config]} api-gateway
+  (let [{:keys [swagger deploy api-id profile raml-config]} api-gateway
         basearg (case task
           :update (vector "--update" api-id)
           :create (vector "--create"))
-        stagearg (if (nil? stage) '() (vector "--stage" stage))
+        stagearg (if (nil? deploy) '() (vector "--deploy" deploy))
         profilearg (if (nil? profile) '() (vector "--profile" profile))
         raml-arg (if (nil? raml-config) '() (vector "--raml-config" raml-config))]
     (concat basearg stagearg profilearg raml-arg (vector swagger))))
