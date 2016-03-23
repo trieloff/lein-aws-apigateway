@@ -28,7 +28,7 @@
 (defn create-api
   "Create a new API"
   [project args]
-  (pprint (build-args project :create))
+  ;(pprint (build-args project :create))
   (ApiImporterMain/main (into-array String (build-args project :create))))
 
 (defn aws-api-gateway
