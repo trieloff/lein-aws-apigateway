@@ -12,8 +12,11 @@
   (let [{:keys [swagger stage api-id profile raml-config]} api-gateway
         basearg (case task
           :update (vector "--update" api-id)
-          :create (vector "--create"))]
-    basearg))
+          :create (vector "--create"))
+        stagearg (if (nil? stage) '() (vector "--stage" stage))
+        profilearg (if (nil? profile) '() (vector "--profile" profile))
+        raml-arg (if (nil? raml-config) '() (vector "--raml-config" raml-config))]
+    (concat basearg stagearg profilearg raml-arg (vector swagger))))
 
 (defn update-api
   "Update an existing API"
@@ -25,6 +28,7 @@
 (defn create-api
   "Create a new API"
   [project args]
+  (pprint (build-args project :create))
   (ApiImporterMain/main (into-array String ["--create"])))
 
 (defn aws-api-gateway
@@ -35,4 +39,4 @@
     "create-api" (create-api project args)
     "update-api" (update-api project args)
     :nil     :not-implemented-yet
-    (leiningen.core.main/warn "Use 'create' or 'update' as subtasks")))
+    (leiningen.core.main/warn "Use 'create-api' or 'update-api' as subtasks")))
