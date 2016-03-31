@@ -46,12 +46,31 @@ lein aws-api-gateway create-api
 To update an API, run
 
 ```
-lein awe-api-gateway update-api
+lein aws-api-gateway update-api
 ```
 
 ## API Gateway Extensions for Swagger
 
 If you want to deploy the API, your Swagger file should use the `x-amazon-apigateway-auth` and `x-amazon-apigateway-integration` extensions. The aws-apigateway-importer documentation provides an [example](https://github.com/awslabs/aws-apigateway-importer#api-gateway-extension-example).
+
+## Development
+
+The plugin is currently unreleased, as it depdends on a snapshot version of [aws-apigateway-importer](https://github.com/awslabs/aws-apigateway-importer). In order to build and run the Leiningen plugin, you need to clone and build AWS API Gateway Importer first:
+
+```
+git clone https://github.com/awslabs/aws-apigateway-importer.git
+cd aws-apigateway-importer
+mvn clean install
+```
+
+Then clone and install the plugin:
+
+```
+git clone https://github.com/trieloff/lein-aws-apigateway.git
+cd lein-aws-apigateway
+lein install
+
+```
 
 ## Versioning and Licensing
 
