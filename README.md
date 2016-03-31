@@ -22,7 +22,7 @@ The configuration parameters map to the command line arguments in the [aws-apiga
 * `profile` – (optional) the AWS configuration/credential profile to use. The default value is `default`.
 * `swagger` – (required) the path to the Swagger file that should be used in the import. Depending on your workflow, this is most likely somewhere in `target`, if auto-generated or somewhere in `resources` if hand-crafted
 * `deploy` – (optional) specifying a value here will automatically deploy the API to the stage provided as a value to this parameter.
-* `api-id` – (required, for `update-api` task) the ID of the API that should be updated. The `update-api` task will fail if no `api-id` has been specified, but it is not required for the `create-api` task.
+* `api-id` – (required, for `update-api` task) the ID of the API that should be updated. The `update-api` task will fail if no `api-id` has been specified, but it is not required for the `create-api` task. You can retrieve the API ID by running `aws apigateway get-rest-apis` if you have the AWS command line tools installed. Right now, the AWS Console does not list the API ID.
 * `raml-config` – don’t know what it does. The same as `—ramp-config` in [aws-apigateway-importer](https://github.com/awslabs/aws-apigateway-importer).
 
 ## Authentication
