@@ -11,8 +11,8 @@
   [{api-gateway :api-gateway} task]
   (let [{:keys [swagger deploy api-id profile raml-config]} api-gateway
         basearg (case task
-          :update (vector "--update" api-id)
-          :create (vector "--create"))
+                  :update (vector "--update" api-id)
+                  :create (vector "--create"))
         stagearg (if (nil? deploy) '() (vector "--deploy" deploy))
         profilearg (if (nil? profile) '() (vector "--profile" profile))
         raml-arg (if (nil? raml-config) '() (vector "--raml-config" raml-config))]
@@ -21,14 +21,14 @@
 (defn update-api
   "Update an existing API"
   [project args]
-  ;(pprint (build-args project :update))
-  (ApiImporterMain/main (into-array String (build-args project :update)))
-  )
+  (pprint (build-args project :update))
+  (ApiImporterMain/main (into-array String (build-args project :update))))
+
 
 (defn create-api
   "Create a new API"
   [project args]
-  ;(pprint (build-args project :create))
+  (pprint (build-args project :create))
   (ApiImporterMain/main (into-array String (build-args project :create))))
 
 (defn aws-api-gateway
