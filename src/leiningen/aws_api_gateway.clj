@@ -1,12 +1,12 @@
 (ns leiningen.aws-api-gateway
   "Deploy swagger.json to API Gateway"
+  (:refer-clojure :exclude [update])
   (import com.amazonaws.services.apigateway.AmazonApiGatewayClient
           com.amazonaws.services.apigateway.model.ImportRestApiRequest
           com.amazonaws.services.apigateway.model.PutRestApiRequest
           com.amazonaws.services.apigateway.model.CreateDeploymentRequest
           com.amazonaws.services.apigateway.model.DeleteRestApiRequest)
-  (require [clojure.pprint :refer [pprint]]
-           [byte-streams :as byte-streams]
+  (require [byte-streams :as byte-streams]
            [leiningen.core.project :refer [merge-profiles]]
            [clojure.reflect :refer [reflect]]
            [leiningen.core.eval :refer [eval-in-project]]))
@@ -45,14 +45,14 @@
                   stage)]
     (.getId (.createDeployment (AmazonApiGatewayClient.) request))))
 
-(defn create-api
+(defn create
   "Create a new API"
   [project args]
   (if-not (-> project :api-gateway :swagger)
     (leiningen.core.main/abort "Please add :api-gateway :swagger to your profile")
     (println "Created API with ID:" (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger))))))
 
-(defn update-api
+(defn update
   "Update an existing API"
   [project args]
   (if-not (-> project :api-gateway :api-id)
@@ -63,7 +63,7 @@
                                          (clojure.java.io/file (-> project :api-gateway :swagger))
                                          (-> project :api-gateway :api-id))))))
 
-(defn delete-api
+(defn delete
   "Delete an existing API"
   [project args]
   (if (nil? args)
@@ -73,7 +73,8 @@
         (println "Deleted API with ID:" args)
         (identity args))))
 
-(defn deploy-api
+(defn deploy
+  "Deploy an existing API"
   [project args]
   (if-not (-> project :api-gateway :api-id)
     (leiningen.core.main/abort "Please add :api-gateway :api-id to your profile")
@@ -88,9 +89,9 @@
   {:subtasks [#'create #'update #'delete #'deploy]}
   [project & [task args]]
   (case task
-    "create" (create-api project args)
-    "update" (update-api project args)
-    "delete" (delete-api project args)
-    "deploy" (deploy-api project args)
+    "create" (create project args)
+    "update" (update project args)
+    "delete" (delete project args)
+    "deploy" (deploy project args)
     :nil     :not-implemented-yet
     (leiningen.core.main/warn "Use 'create', 'delete', 'deploy' or 'update' as subtasks")))

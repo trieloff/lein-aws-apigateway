@@ -9,5 +9,4 @@
                  [com.amazonaws/aws-java-sdk-s3 "1.10.68"]
                  [byte-streams "0.2.2"]
                  [leiningen-core "2.6.1"]
-                 [org.clojure/clojure "1.8.0"]
-                 [amazonica "0.3.53" :exclusions [com.amazonaws/aws-java-sdk]]])
+                 [org.clojure/clojure "1.8.0"]])
