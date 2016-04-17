@@ -1,6 +1,6 @@
-(defproject lein-aws-api-gateway "1.10.68-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject lein-aws-api-gateway "1.10.68"
+  :description "A leiningen plugin that helps with AWS API Gateway"
+  :url "https://github.com/trieloff/lein-aws-apigateway"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :eval-in-leiningen false
