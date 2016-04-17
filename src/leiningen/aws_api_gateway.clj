@@ -41,7 +41,7 @@
   [project args]
   (if-not (-> project :api-gateway :swagger)
     (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
-    (println "Created API with ID: " (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger))))))
+    (println "Created API with ID:" (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger))))))
 
 (defn update-api
   "Update an existing API"
@@ -50,7 +50,7 @@
     (leiningen.core.main/warn "Please add :api-gateway :api-id to your profile")
     (if-not (-> project :api-gateway :swagger)
       (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
-      (println "Updated API with ID: " (update-rest-api
+      (println "Updated API with ID:" (update-rest-api
                                          (clojure.java.io/file (-> project :api-gateway :swagger))
                                          (-> project :api-gateway :api-id))))))
 
@@ -61,7 +61,7 @@
     (leiningen.core.main/warn "Please specify the API ID, e.g. 'lein aws-api-gateway delete-api 123xyz98ba'")
       (do
         (delete-rest-api (str args))
-        (println "Deleted API with ID: " args)
+        (println "Deleted API with ID:" args)
         (identity args))))
 
 
