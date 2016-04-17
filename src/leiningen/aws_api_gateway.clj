@@ -67,7 +67,7 @@
   "Delete an existing API"
   [project args]
   (if (nil? args)
-    (leiningen.core.main/abort "Please specify the API ID, e.g. 'lein aws-api-gateway delete-api 123xyz98ba'")
+    (leiningen.core.main/abort "Please specify the API ID, e.g. 'lein aws-api-gateway delete 123xyz98ba'")
       (do
         (delete-rest-api (str args))
         (println "Deleted API with ID:" args)
@@ -78,19 +78,19 @@
   (if-not (-> project :api-gateway :api-id)
     (leiningen.core.main/abort "Please add :api-gateway :api-id to your profile")
     (if (nil? args)
-      (leiningen.core.main/abort "Please specify the deploy stage, e.g. 'lein aws-api-gateway deploy-api dev'")
+      (leiningen.core.main/abort "Please specify the deploy stage, e.g. 'lein aws-api-gateway deploy dev'")
       (println "Deployed API with ID:" (deploy-rest-api
                                          (-> project :api-gateway :api-id)
                                          (str args))))))
 
 (defn aws-api-gateway
   "Deploy swagger.json to AWS API Gateway"
-  {:subtasks [#'create-api #'update-api]}
+  {:subtasks [#'create #'update #'delete #'deploy]}
   [project & [task args]]
   (case task
-    "create-api" (create-api project args)
-    "update-api" (update-api project args)
-    "delete-api" (delete-api project args)
-    "deploy-api" (deploy-api project args)
+    "create" (create-api project args)
+    "update" (update-api project args)
+    "delete" (delete-api project args)
+    "deploy" (deploy-api project args)
     :nil     :not-implemented-yet
-    (leiningen.core.main/warn "Use 'create-api', 'delete-api', 'deploy-api' or 'update-api' as subtasks")))
+    (leiningen.core.main/warn "Use 'create', 'delete', 'deploy' or 'update' as subtasks")))

@@ -11,14 +11,13 @@ Configure your `project.clj` by addinng an `:api-gateway` configuration map:
 
 ```
 :api-gateway {:api-id "your-api-id"
-              :deploy "dev"
               :swagger "target/swagger.json"}
 ```
 
 The configuration parameters map to the command line arguments in the [aws-apigateway-importer](https://github.com/awslabs/aws-apigateway-importer), in particular:
 
 * `swagger` – (required) the path to the Swagger file that should be used in the import. Depending on your workflow, this is most likely somewhere in `target`, if auto-generated or somewhere in `resources` if hand-crafted
-* `api-id` – (required, for `update-api` task) the ID of the API that should be updated. The `update-api` task will fail if no `api-id` has been specified, but it is not required for the `create-api` task. You can retrieve the API ID by running `aws apigateway get-rest-apis` if you have the AWS command line tools installed. Right now, the AWS Console does not list the API ID.
+* `api-id` – (required, for `update` and `deploy` tasks) the ID of the API that should be updated. The `update-api` task will fail if no `api-id` has been specified, but it is not required for the `create` task. You can retrieve the API ID by running `aws apigateway get-rest-apis` if you have the AWS command line tools installed.
 
 ## Authentication
 
@@ -35,7 +34,7 @@ For further reference, please check the [AWS Java SDK Credentials Reference docu
 In order to create a new API, use following command:
 
 ```
-lein aws-api-gateway create-api
+lein aws-api-gateway create
 ```
 
 Creating a new API will return the API ID. This ID is important for future use. The `:api-id` in your configuration will be ignored when running this task.
@@ -43,19 +42,19 @@ Creating a new API will return the API ID. This ID is important for future use. 
 To update an API, run
 
 ```
-lein aws-api-gateway update-api
+lein aws-api-gateway update
 ```
 
 To delete an already existing API, run
 
 ```
-lein aws-api-gateway delete-api <API-ID>
+lein aws-api-gateway delete <API-ID>
 ```
 
 To deploy an existing API, run
 
 ```
-lein aws-api-gateway deploy-api <STAGE>
+lein aws-api-gateway deploy <STAGE>
 ```
 
 ## API Gateway Extensions for Swagger
