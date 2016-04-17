@@ -10,20 +10,16 @@ Add `[lein-aws-api-gateway "1.0.3-SNAPSHOT"]` to the `:plugins` vector of your
 Configure your `project.clj` by addinng an `:api-gateway` configuration map:
 
 ```
-:api-gateway {:profile "default"
-              :raml-config "target/optional.raml"
-              :api-id "your-api-id"
+:api-gateway {:api-id "your-api-id"
               :deploy "dev"
               :swagger "target/swagger.json"}
 ```
 
 The configuration parameters map to the command line arguments in the [aws-apigateway-importer](https://github.com/awslabs/aws-apigateway-importer), in particular:
 
-* `profile` – (optional) the AWS configuration/credential profile to use. The default value is `default`.
 * `swagger` – (required) the path to the Swagger file that should be used in the import. Depending on your workflow, this is most likely somewhere in `target`, if auto-generated or somewhere in `resources` if hand-crafted
 * `deploy` – (optional) specifying a value here will automatically deploy the API to the stage provided as a value to this parameter.
 * `api-id` – (required, for `update-api` task) the ID of the API that should be updated. The `update-api` task will fail if no `api-id` has been specified, but it is not required for the `create-api` task. You can retrieve the API ID by running `aws apigateway get-rest-apis` if you have the AWS command line tools installed. Right now, the AWS Console does not list the API ID.
-* `raml-config` – don’t know what it does. The same as `—ramp-config` in [aws-apigateway-importer](https://github.com/awslabs/aws-apigateway-importer).
 
 ## Authentication
 
@@ -43,6 +39,8 @@ In order to create a new API, use following command:
 lein aws-api-gateway create-api
 ```
 
+Creating a new API will return the API ID. This ID is important for future use. The `:api-id` in your configuration will be ignored when running this task.
+
 To update an API, run
 
 ```
@@ -55,15 +53,7 @@ If you want to deploy the API, your Swagger file should use the `x-amazon-apigat
 
 ## Development
 
-The plugin is currently unreleased, as it depdends on a snapshot version of [aws-apigateway-importer](https://github.com/awslabs/aws-apigateway-importer). In order to build and run the Leiningen plugin, you need to clone and build AWS API Gateway Importer first:
-
-```
-git clone https://github.com/awslabs/aws-apigateway-importer.git
-cd aws-apigateway-importer
-mvn clean install
-```
-
-Then clone and install the plugin:
+Clone and install the plugin:
 
 ```
 git clone https://github.com/trieloff/lein-aws-apigateway.git
@@ -74,7 +64,7 @@ lein install
 
 ## Versioning and Licensing
 
-* The current version is 1.0.1 and it wraps the [AWS API Gateway Importer](https://github.com/awslabs/aws-apigateway-importer) of the same version.
+* The current version is 1.10.68 and it wraps the [AWS Java SDK](https://aws.amazon.com/sdk-for-java/) of the same version.
 * The plugin is distributed under the terms of the [Eclipse Public License](https://github.com/trieloff/lein-aws-apigateway/blob/master/LICENSE), the same as [Leiningen](http://leiningen.org) uses.
 
 ## Limitations and Improvements
