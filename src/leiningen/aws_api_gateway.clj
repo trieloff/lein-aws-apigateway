@@ -43,7 +43,7 @@
                     (CreateDeploymentRequest.)
                     id)
                   stage)]
-    (.createDeployment (AmazonApiGatewayClient.) request)))
+    (.getId (.createDeployment (AmazonApiGatewayClient.) request))))
 
 (defn create-api
   "Create a new API"
@@ -59,7 +59,7 @@
     (leiningen.core.main/abort "Please add :api-gateway :api-id to your profile")
     (if-not (-> project :api-gateway :swagger)
       (leiningen.core.main/abort "Please add :api-gateway :swagger to your profile")
-      (println "Updated API with ID:" (update-rest-api
+      (println "Updated API with Deployment ID:" (update-rest-api
                                          (clojure.java.io/file (-> project :api-gateway :swagger))
                                          (-> project :api-gateway :api-id))))))
 
@@ -79,7 +79,7 @@
     (leiningen.core.main/abort "Please add :api-gateway :api-id to your profile")
     (if (nil? args)
       (leiningen.core.main/abort "Please specify the deploy stage, e.g. 'lein aws-api-gateway deploy-api dev'")
-      (println "Deplyed API with ID:" (deploy-rest-api
+      (println "Deployed API with ID:" (deploy-rest-api
                                          (-> project :api-gateway :api-id)
                                          (str args))))))
 
