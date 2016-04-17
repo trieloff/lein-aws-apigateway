@@ -3,6 +3,7 @@
   (import com.amazonaws.services.apigateway.AmazonApiGatewayClient
           com.amazonaws.services.apigateway.model.ImportRestApiRequest
           com.amazonaws.services.apigateway.model.PutRestApiRequest
+          com.amazonaws.services.apigateway.model.CreateDeploymentRequest
           com.amazonaws.services.apigateway.model.DeleteRestApiRequest)
   (require [clojure.pprint :refer [pprint]]
            [byte-streams :as byte-streams]
@@ -36,6 +37,14 @@
   (let [request (.withRestApiId (DeleteRestApiRequest.) id)]
     (.deleteRestApi (AmazonApiGatewayClient.) request)))
 
+(defn deploy-rest-api [id stage]
+  (let [request (.withStageName
+                  (.withRestApiId
+                    (CreateDeploymentRequest.)
+                    id)
+                  stage)]
+    (.createDeployment (AmazonApiGatewayClient.) request)))
+
 (defn create-api
   "Create a new API"
   [project args]
@@ -64,6 +73,15 @@
         (println "Deleted API with ID:" args)
         (identity args))))
 
+(defn deploy-api
+  [project args]
+  (if-not (-> project :api-gateway :api-id)
+    (leiningen.core.main/warn "Please add :api-gateway :api-id to your profile")
+    (if (nil? args)
+      (leiningen.core.main/warn "Please specify the deploy stage, e.g. 'lein aws-api-gateway deploy-api dev'")
+      (println "Deplyed API with ID:" (deploy-rest-api
+                                         (-> project :api-gateway :api-id)
+                                         (str args))))))
 
 (defn aws-api-gateway
   "Deploy swagger.json to AWS API Gateway"
@@ -73,8 +91,9 @@
     "create-api" (create-api project args)
     "update-api" (update-api project args)
     "delete-api" (delete-api project args)
+    "deploy-api" (deploy-api project args)
     :nil     :not-implemented-yet
-    (leiningen.core.main/warn "Use 'create-api', 'delete-api' or 'update-api' as subtasks")))
+    (leiningen.core.main/warn "Use 'create-api', 'delete-api', 'deploy-api' or 'update-api' as subtasks")))
 
 
 ;(def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
