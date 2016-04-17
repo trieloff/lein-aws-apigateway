@@ -49,16 +49,16 @@
   "Create a new API"
   [project args]
   (if-not (-> project :api-gateway :swagger)
-    (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
+    (leiningen.core.main/abort "Please add :api-gateway :swagger to your profile")
     (println "Created API with ID:" (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger))))))
 
 (defn update-api
   "Update an existing API"
   [project args]
   (if-not (-> project :api-gateway :api-id)
-    (leiningen.core.main/warn "Please add :api-gateway :api-id to your profile")
+    (leiningen.core.main/abort "Please add :api-gateway :api-id to your profile")
     (if-not (-> project :api-gateway :swagger)
-      (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
+      (leiningen.core.main/abort "Please add :api-gateway :swagger to your profile")
       (println "Updated API with ID:" (update-rest-api
                                          (clojure.java.io/file (-> project :api-gateway :swagger))
                                          (-> project :api-gateway :api-id))))))
@@ -67,7 +67,7 @@
   "Delete an existing API"
   [project args]
   (if (nil? args)
-    (leiningen.core.main/warn "Please specify the API ID, e.g. 'lein aws-api-gateway delete-api 123xyz98ba'")
+    (leiningen.core.main/abort "Please specify the API ID, e.g. 'lein aws-api-gateway delete-api 123xyz98ba'")
       (do
         (delete-rest-api (str args))
         (println "Deleted API with ID:" args)
@@ -76,9 +76,9 @@
 (defn deploy-api
   [project args]
   (if-not (-> project :api-gateway :api-id)
-    (leiningen.core.main/warn "Please add :api-gateway :api-id to your profile")
+    (leiningen.core.main/abort "Please add :api-gateway :api-id to your profile")
     (if (nil? args)
-      (leiningen.core.main/warn "Please specify the deploy stage, e.g. 'lein aws-api-gateway deploy-api dev'")
+      (leiningen.core.main/abort "Please specify the deploy stage, e.g. 'lein aws-api-gateway deploy-api dev'")
       (println "Deplyed API with ID:" (deploy-rest-api
                                          (-> project :api-gateway :api-id)
                                          (str args))))))
@@ -94,12 +94,3 @@
     "deploy-api" (deploy-api project args)
     :nil     :not-implemented-yet
     (leiningen.core.main/warn "Use 'create-api', 'delete-api', 'deploy-api' or 'update-api' as subtasks")))
-
-
-;(def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
-
-;(import-rest-api myfile)
-
-;(aws/get-rest-api :rest-api-id "04511k2k4e")
-
-;(update-rest-api myfile "04511k2k4e")
