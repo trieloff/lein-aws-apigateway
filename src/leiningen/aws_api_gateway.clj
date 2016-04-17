@@ -22,12 +22,6 @@
         raml-arg (if (nil? raml-config) '() (vector "--raml-config" raml-config))]
     (concat basearg stagearg profilearg raml-arg (vector swagger))))
 
-(defn update-api
-  "Update an existing API"
-  [project args]
-  (pprint (build-args project :update))
-  (println "ApiImporterMain/main" (into-array String (build-args project :update))))
-
 (defn import-rest-api [swagger]
   (let [swaggerbb (byte-streams/convert swagger java.nio.ByteBuffer)
         request (.withBody
@@ -54,8 +48,19 @@
   "Create a new API"
   [project args]
   (if-not (-> project :api-gateway :swagger)
-    (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile"))
-    (println "Created API with ID: " (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger)))))
+    (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
+    (println "Created API with ID: " (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger))))))
+
+(defn update-api
+  "Update an existing API"
+  [project args]
+  (if-not (-> project :api-gateway :api-id)
+    (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
+    (if-not (-> project :api-gateway :swagger)
+      (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
+      (println "Updated API with ID: " (update-rest-api
+                                         (clojure.java.io/file (-> project :api-gateway :swagger))
+                                         (-> project :api-gateway :api-id))))))
 
 (defn aws-api-gateway
   "Deploy swagger.json to AWS API Gateway"
