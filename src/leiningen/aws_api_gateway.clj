@@ -1,7 +1,10 @@
 (ns leiningen.aws-api-gateway
   "Deploy swagger.json to API Gateway"
-  (import com.amazonaws.service.apigateway.importer.ApiImporterMain)
+  (import com.amazonaws.services.apigateway.AmazonApiGatewayClient
+          com.amazonaws.services.apigateway.model.ImportRestApiRequest)
   (require [clojure.pprint :refer [pprint]]
+           [byte-streams :as byte-streams]
+           [amazonica.aws.apigateway :as aws]
            [leiningen.core.project :refer [merge-profiles]]
            [clojure.reflect :refer [reflect]]
            [leiningen.core.eval :refer [eval-in-project]]))
@@ -22,14 +25,14 @@
   "Update an existing API"
   [project args]
   (pprint (build-args project :update))
-  (ApiImporterMain/main (into-array String (build-args project :update))))
+  (println "ApiImporterMain/main" (into-array String (build-args project :update))))
 
 
 (defn create-api
   "Create a new API"
   [project args]
   (pprint (build-args project :create))
-  (ApiImporterMain/main (into-array String (build-args project :create))))
+  (println "ApiImporterMain/main" (into-array String (build-args project :create))))
 
 (defn aws-api-gateway
   "Deploy swagger.json to AWS API Gateway"
@@ -40,3 +43,20 @@
     "update-api" (update-api project args)
     :nil     :not-implemented-yet
     (leiningen.core.main/warn "Use 'create-api' or 'update-api' as subtasks")))
+
+(def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
+
+(def myswagger (byte-streams/convert myfile java.nio.ByteBuffer))
+
+(def request
+               (.withBody
+                   (ImportRestApiRequest.)
+                   myswagger)
+               )
+
+(identity (.setParameters request {"Name" "FooBar"}))
+
+(aws/get-rest-apis :limit 100)
+
+
+(.importRestApi (AmazonApiGatewayClient.) request)
