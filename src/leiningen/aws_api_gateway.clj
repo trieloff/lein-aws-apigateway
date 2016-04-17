@@ -44,19 +44,15 @@
     :nil     :not-implemented-yet
     (leiningen.core.main/warn "Use 'create-api' or 'update-api' as subtasks")))
 
+(defn import-rest-api [swagger]
+  (let [swaggerbb (byte-streams/convert swagger java.nio.ByteBuffer)
+        request (.withBody
+                   (ImportRestApiRequest.)
+                   swaggerbb)]
+    (do
+      (.setParameters request {})
+      (.getId (.importRestApi (AmazonApiGatewayClient.) request)))))
+
 (def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
 
-(def myswagger (byte-streams/convert myfile java.nio.ByteBuffer))
-
-(def request
-               (.withBody
-                   (ImportRestApiRequest.)
-                   myswagger)
-               )
-
-(identity (.setParameters request {"Name" "FooBar"}))
-
-(aws/get-rest-apis :limit 100)
-
-
-(.importRestApi (AmazonApiGatewayClient.) request)
+(import-rest-api myfile)
