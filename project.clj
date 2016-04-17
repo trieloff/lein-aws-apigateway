@@ -1,4 +1,4 @@
-(defproject lein-aws-api-gateway "1.10.68"
+(defproject lein-aws-api-gateway "1.10.68-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"

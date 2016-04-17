@@ -4,7 +4,7 @@
 
 ## Configuration
 
-Add `[lein-aws-api-gateway "1.0.3-SNAPSHOT"]` to the `:plugins` vector of your
+Add `[lein-aws-api-gateway "1.10.68-SNAPSHOT"]` to the `:plugins` vector of your
 `project.clj` or `profile.clj`.
 
 Configure your `project.clj` by addinng an `:api-gateway` configuration map:
