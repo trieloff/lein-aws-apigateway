@@ -4,7 +4,7 @@
 
 ## Configuration
 
-Add `[lein-aws-api-gateway "1.10.68"]` to the `:plugins` vector of your
+Add `[lein-aws-api-gateway "1.10.68-1"]` to the `:plugins` vector of your
 `project.clj` or `profile.clj`.
 
 Configure your `project.clj` by adding an `:api-gateway` configuration map:
@@ -74,7 +74,7 @@ lein install
 
 ## Versioning and Licensing
 
-* The current version is 1.10.68 and it wraps the [AWS Java SDK](https://aws.amazon.com/sdk-for-java/) of the same version.
+* The current version is 1.10.68-1 and it wraps the [AWS Java SDK](https://aws.amazon.com/sdk-for-java/) of the same version (without the -1 patch).
 * The plugin is distributed under the terms of the [Eclipse Public License](https://github.com/trieloff/lein-aws-apigateway/blob/master/LICENSE), the same as [Leiningen](http://leiningen.org) uses.
 
 ## Limitations and Improvements
