@@ -47,6 +47,12 @@ To update an API, run
 lein aws-api-gateway update-api
 ```
 
+To delete an already existing API, run
+
+```
+lein aws-api-gateway delete-api <API-ID>
+```
+
 ## API Gateway Extensions for Swagger
 
 If you want to deploy the API, your Swagger file should use the `x-amazon-apigateway-auth` and `x-amazon-apigateway-integration` extensions. The aws-apigateway-importer documentation provides an [example](https://github.com/awslabs/aws-apigateway-importer#api-gateway-extension-example).

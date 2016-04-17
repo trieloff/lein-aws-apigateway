@@ -2,25 +2,13 @@
   "Deploy swagger.json to API Gateway"
   (import com.amazonaws.services.apigateway.AmazonApiGatewayClient
           com.amazonaws.services.apigateway.model.ImportRestApiRequest
-          com.amazonaws.services.apigateway.model.PutRestApiRequest)
+          com.amazonaws.services.apigateway.model.PutRestApiRequest
+          com.amazonaws.services.apigateway.model.DeleteRestApiRequest)
   (require [clojure.pprint :refer [pprint]]
            [byte-streams :as byte-streams]
-           [amazonica.aws.apigateway :as aws :only [get-rest-api]]
            [leiningen.core.project :refer [merge-profiles]]
            [clojure.reflect :refer [reflect]]
            [leiningen.core.eval :refer [eval-in-project]]))
-
-
-(defn build-args
-  [{api-gateway :api-gateway} task]
-  (let [{:keys [swagger deploy api-id profile raml-config]} api-gateway
-        basearg (case task
-                  :update (vector "--update" api-id)
-                  :create (vector "--create"))
-        stagearg (if (nil? deploy) '() (vector "--deploy" deploy))
-        profilearg (if (nil? profile) '() (vector "--profile" profile))
-        raml-arg (if (nil? raml-config) '() (vector "--raml-config" raml-config))]
-    (concat basearg stagearg profilearg raml-arg (vector swagger))))
 
 (defn import-rest-api [swagger]
   (let [swaggerbb (byte-streams/convert swagger java.nio.ByteBuffer)
@@ -44,6 +32,10 @@
       (.setParameters request {})
       (.getId (.putRestApi (AmazonApiGatewayClient.) request)))))
 
+(defn delete-rest-api [id]
+  (let [request (.withRestApiId (DeleteRestApiRequest.) id)]
+    (.deleteRestApi (AmazonApiGatewayClient.) request)))
+
 (defn create-api
   "Create a new API"
   [project args]
@@ -55,12 +47,23 @@
   "Update an existing API"
   [project args]
   (if-not (-> project :api-gateway :api-id)
-    (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
+    (leiningen.core.main/warn "Please add :api-gateway :api-id to your profile")
     (if-not (-> project :api-gateway :swagger)
       (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile")
       (println "Updated API with ID: " (update-rest-api
                                          (clojure.java.io/file (-> project :api-gateway :swagger))
                                          (-> project :api-gateway :api-id))))))
+
+(defn delete-api
+  "Delete an existing API"
+  [project args]
+  (if (nil? args)
+    (leiningen.core.main/warn "Please specify the API ID, e.g. 'lein aws-api-gateway delete-api 123xyz98ba'")
+      (do
+        (delete-rest-api (str args))
+        (println "Deleted API with ID: " args)
+        (identity args))))
+
 
 (defn aws-api-gateway
   "Deploy swagger.json to AWS API Gateway"
@@ -69,8 +72,9 @@
   (case task
     "create-api" (create-api project args)
     "update-api" (update-api project args)
+    "delete-api" (delete-api project args)
     :nil     :not-implemented-yet
-    (leiningen.core.main/warn "Use 'create-api' or 'update-api' as subtasks")))
+    (leiningen.core.main/warn "Use 'create-api', 'delete-api' or 'update-api' as subtasks")))
 
 
 ;(def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
