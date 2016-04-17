@@ -5,7 +5,7 @@
           com.amazonaws.services.apigateway.model.PutRestApiRequest)
   (require [clojure.pprint :refer [pprint]]
            [byte-streams :as byte-streams]
-           [amazonica.aws.apigateway :as aws]
+           [amazonica.aws.apigateway :as aws :only [get-rest-api]]
            [leiningen.core.project :refer [merge-profiles]]
            [clojure.reflect :refer [reflect]]
            [leiningen.core.eval :refer [eval-in-project]]))
@@ -27,23 +27,6 @@
   [project args]
   (pprint (build-args project :update))
   (println "ApiImporterMain/main" (into-array String (build-args project :update))))
-
-
-(defn create-api
-  "Create a new API"
-  [project args]
-  (pprint (build-args project :create))
-  (println "ApiImporterMain/main" (into-array String (build-args project :create))))
-
-(defn aws-api-gateway
-  "Deploy swagger.json to AWS API Gateway"
-  {:subtasks [#'create-api #'update-api]}
-  [project & [task args]]
-  (case task
-    "create-api" (create-api project args)
-    "update-api" (update-api project args)
-    :nil     :not-implemented-yet
-    (leiningen.core.main/warn "Use 'create-api' or 'update-api' as subtasks")))
 
 (defn import-rest-api [swagger]
   (let [swaggerbb (byte-streams/convert swagger java.nio.ByteBuffer)
@@ -67,10 +50,28 @@
       (.setParameters request {})
       (.getId (.putRestApi (AmazonApiGatewayClient.) request)))))
 
-(def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
+(defn create-api
+  "Create a new API"
+  [project args]
+  (if-not (-> project :api-gateway :swagger)
+    (leiningen.core.main/warn "Please add :api-gateway :swagger to your profile"))
+    (println "Created API with ID: " (import-rest-api (clojure.java.io/file (-> project :api-gateway :swagger)))))
+
+(defn aws-api-gateway
+  "Deploy swagger.json to AWS API Gateway"
+  {:subtasks [#'create-api #'update-api]}
+  [project & [task args]]
+  (case task
+    "create-api" (create-api project args)
+    "update-api" (update-api project args)
+    :nil     :not-implemented-yet
+    (leiningen.core.main/warn "Use 'create-api' or 'update-api' as subtasks")))
+
+
+;(def myfile (clojure.java.io/file "/Users/trieloff/Documents/excelsior/resources/swagger-example.json"))
 
 ;(import-rest-api myfile)
 
-(aws/get-rest-api :rest-api-id "04511k2k4e")
+;(aws/get-rest-api :rest-api-id "04511k2k4e")
 
-(update-rest-api myfile "04511k2k4e")
+;(update-rest-api myfile "04511k2k4e")
